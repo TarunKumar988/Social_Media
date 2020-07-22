@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MessageActivity">
+
+    <include
+        layout="@layout/custom_title_bar"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:background="@mipmap/chatting_background"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="3dp"
+
+            android:layout_above="@+id/messageParent"
+            android:layout_marginBottom="2dp" />
+
+    <RelativeLayout
+        android:id="@+id/messageParent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        >
+
+
+        <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/typeMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:hint="@string/type_message"
+                    android:layout_toLeftOf="@+id/send"
+            android:backgroundTint="@color/white"
+            android:layout_marginRight="5dp"
+                    android:layout_toStartOf="@+id/send"
+                    android:background="@drawable/edit_text_style"
+                  />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/send"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            style="@style/IconButton"
+            />
+
+    </RelativeLayout>
+</RelativeLayout>
+
+
+</LinearLayout>

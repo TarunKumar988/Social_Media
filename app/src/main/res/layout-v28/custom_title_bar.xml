@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
+    app:popupTheme="@style/Theme.MyApp"
+    >
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        >
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/profile"
+        android:src="@drawable/gmail"
+        />
+    <View
+        android:layout_width="10dp"
+        android:layout_height="wrap_content"
+        />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/my_application"
+        android:id="@+id/name"
+        android:lineHeight="@dimen/activity_padding"
+        android:textColor="@color/white"
+        />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/onlineStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/online"
+            android:textSize="12sp"
+            android:visibility="gone"
+            android:layout_below="@+id/name"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp" />
+    </RelativeLayout>
+
+</com.google.android.material.appbar.MaterialToolbar>
+</com.google.android.material.appbar.AppBarLayout>

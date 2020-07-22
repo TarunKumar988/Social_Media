@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    >
+
+    <item android:id="@+id/first"
+        android:title="Profile"
+        android:icon="@mipmap/profile"
+        />
+    <item android:id="@+id/second"
+        android:title="Friends"
+        android:icon="@mipmap/friends"
+        />
+    <item android:id="@+id/third"
+        android:title="Chats"
+        android:icon="@mipmap/chating_icon"
+        />
+    <item android:id="@+id/forth"
+        android:title="forth"
+        android:icon="@mipmap/profile"
+        />
+
+<item android:title="Comunictaion">
+    <menu>
+    <item android:title="my item"
+        android:icon="@mipmap/profile"
+        android:id="@+id/myItem"
+        />
+    <item android:title="LogOut"
+        android:icon="@mipmap/profile"
+        android:id="@+id/logout"
+        />
+
+</menu>
+</item>
+</menu>

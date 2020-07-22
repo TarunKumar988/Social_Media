@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5BA7B1</color>
+    <color name="colorPrimaryDark">#54939C</color>
+    <color name="colorPrimaryVariant">#502477</color>
+    <color name="colorOnPrimary">#000000</color>
+    <color name="colorSecondary">#34DCCC</color>
+    <color name="colorSecondaryVariant">#000</color>
+    <color name="colorOnSecondary">#000000</color>
+    <color name="textColorPrimary">#FFF</color>
+    <color name="windowBackground">#24AF26</color>
+
+
+    <color name="colorAccent">#03DAC5</color>
+    <color name="black">#000</color>
+    <color name="orange">#F68340</color>
+    <color name="blue">#3F51B5</color>
+    <color name="green">#C631A51C</color>
+    <color name="yellow">#97EF9A</color>
+
+<!--    <color name="colorPrimary">#5770f3</color>-->
+<!--    <color name="colorPrimaryDark">#5770f3</color>-->
+<!--    <color name="colorAccent">#D81B60</color>-->
+    <color name="gradient_start">#5B6FD8</color>
+    <color name="gradient_end">#8e5aeb</color>
+    <color name="profile_desc">#D1D1FF</color>
+    <color name="bg_meta_container">#000000</color>
+    <color name="profile_default_tint">#e0e0e0</color>
+    <color name="white">#fff</color>
+    <color name="message">#AAA7A7</color>
+
+
+</resources>
