@@ -47,7 +47,7 @@ implements SwipeRefreshLayout.OnRefreshListener
 
      FirebaseUser firebaseUser;
     String currentUserName;
-    String uid;
+    static String uid;
     ArrayList<Users> tempadd;
    DatabaseReference databaseReference;
    RecyclerViewOnClickListener listener;
@@ -72,6 +72,7 @@ implements SwipeRefreshLayout.OnRefreshListener
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         setOnClickListener();
+        uid=  FirebaseAuth.getInstance().getCurrentUser().getUid();
         getUsers();
 
         swipeRefreshLayout.post(new Runnable() {
@@ -128,7 +129,7 @@ implements SwipeRefreshLayout.OnRefreshListener
     {
         friends_list=new ArrayList<>();
 
-        uid=  FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         databaseReference= FirebaseDatabase.getInstance().getReference("Friends")
                 .child(uid);
         databaseReference.addValueEventListener(new ValueEventListener() {

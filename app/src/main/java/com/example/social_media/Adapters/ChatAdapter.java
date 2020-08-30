@@ -57,7 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
             }
             else
             {
-                holder.onlineStatus.setText(Extras.calculateOnlineStatus( list.get(position).getStatus()));
+                holder.onlineStatus.setText(Extras.calculateOnlineStatus( list.get(position).getStatus(),"active"));
             }
             getChats(list.get(position),position,holder);
             Glide.with(context).load(list.get(position).getImageURL()).into(holder.profile);

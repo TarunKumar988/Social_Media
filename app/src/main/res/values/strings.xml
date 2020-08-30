@@ -42,13 +42,9 @@
     <string name="type_message">Type message …</string>
     <string name="my_application">MY Application</string>
     <string name="button">Button</string>
-     <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-
-
-
-
+    <string name="todo">TODO</string>
 
 
 </resources>

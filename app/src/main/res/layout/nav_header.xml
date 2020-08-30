@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="name"
         android:textSize="18dp"
+        android:textColor="@color/white"
         android:layout_marginTop="8dp"
         android:id="@+id/name"
         />
@@ -27,6 +28,7 @@
         android:layout_height="wrap_content"
         android:text="name@gmail.com"
         android:layout_marginTop="5dp"
+        android:textColor="@color/white"
         android:textSize="14dp"
         android:id="@+id/email"
         />

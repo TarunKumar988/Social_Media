@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import android.view.View;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -17,8 +18,12 @@ import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.social_media.Adapters.StatusAdapter;
 import com.example.social_media.Extras.OnlineStatusReciever;
+import com.example.social_media.Extras.VideoPlayerRecyclerView;
+import com.example.social_media.Model.Posts;
 import com.example.social_media.Model.Users;
 import com.example.social_media.notification.Token;
 import com.facebook.login.LoginManager;
@@ -33,10 +38,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.volokh.danylo.video_player_manager.manager.PlayerItemChangeListener;
+import com.volokh.danylo.video_player_manager.manager.SingleVideoPlayerManager;
+import com.volokh.danylo.video_player_manager.manager.VideoPlayerManager;
+import com.volokh.danylo.video_player_manager.meta.MetaData;
+import com.volokh.danylo.visibility_utils.calculator.DefaultSingleItemCalculatorCallback;
+import com.volokh.danylo.visibility_utils.calculator.ListItemsVisibilityCalculator;
+import com.volokh.danylo.visibility_utils.calculator.SingleListViewItemActiveCalculator;
+import com.volokh.danylo.visibility_utils.items.ListItem;
+import com.volokh.danylo.visibility_utils.scroll_utils.ItemsPositionGetter;
+import com.volokh.danylo.visibility_utils.scroll_utils.RecyclerViewItemPositionGetter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -55,20 +71,27 @@ public class MainActivity2 extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
         ,SwipeRefreshLayout.OnRefreshListener
 {
-    RecyclerView recyclerView;
+    VideoPlayerRecyclerView recyclerView;
     StatusAdapter statusAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
     CircleImageView profile;
     TextView userName,userEmail;
     OnlineStatusReciever onlineStatusReciever;
 
-    SharedPreferences sharedPreferences;
+   static SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     ArrayList<String> list;
     static String imageUrl,name,email,uid;
     LinearLayout progressBar;
     Toolbar toolbar;
+    LinearLayoutManager linearLayoutManager;
     DrawerLayout drawerLayout;
+    ProgressBar progressBar1;
+    ArrayList<Posts> postsLists;
+    ArrayList<Users> usersLists=new ArrayList<>();
+    private ItemsPositionGetter mItemsPositionGetter;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +101,11 @@ public class MainActivity2 extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-       toolbar =findViewById(R.id.toolbar);
+
+
+        toolbar =findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        progressBar1=findViewById(R.id.progress_bar);
 
 
         swipeRefreshLayout=findViewById(R.id.swiper);
@@ -137,7 +163,11 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
     list.add("Gaming");
     list.add("M416");
     list.add("AWM");
-    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    linearLayoutManager=new LinearLayoutManager(this);
+    linearLayoutManager.setReverseLayout(true);
+    linearLayoutManager.setStackFromEnd(true);
+    recyclerView.setLayoutManager(linearLayoutManager);
+
     getUsersData(uid);
     swipeRefreshLayout.post(new Runnable() {
         @Override
@@ -155,6 +185,7 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
     editor.putString("UID", uid);
     editor.apply();
 
+
 }
     }
 
@@ -170,16 +201,17 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
     {
         progressBar.setVisibility(View.VISIBLE);
 
-
+        usersLists=new ArrayList<>();
         DatabaseReference reference=FirebaseDatabase.getInstance()
                 .getReference("/Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                usersLists.clear();
                 for (DataSnapshot dataSnapshot:snapshot.getChildren())
                 {
                     Users users=dataSnapshot.getValue(Users.class);
+
                     if (users.getId().equals(uid))
                     {
                         setProgressBarIndeterminateVisibility(false);
@@ -192,17 +224,22 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
                         userName.setText(name);
                         userEmail.setText(users.getEmail());
                         setSharedPreferences(name,imageUrl);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
-                        statusAdapter=new StatusAdapter(MainActivity2.this,list,imageUrl);
-                        recyclerView.setAdapter(statusAdapter);
-
+//                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
+                        //statusAdapter=new StatusAdapter(MainActivity2.this,list,imageUrl);
+                        //recyclerView.setAdapter(statusAdapter);
+                    }
+                    else
+                    {
+                        usersLists.add(users);
                     }
                 }
+                getposts();
                 swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error)
+            {
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -247,7 +284,6 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
                 intent.putExtra("Name",name);
                 intent.putExtra("Image",imageUrl);
                 startActivity(intent);
-                Toast.makeText(this, "First", Toast.LENGTH_SHORT).show();
                 break;
             }
             case  R.id.second:
@@ -262,17 +298,19 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
             {
                 Intent intent=new Intent(MainActivity2.this,ChatActivity.class);
                 startActivity(intent);
-                Toast.makeText(this, "Third", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case R.id.forth:
+            case R.id.uploadPost:
             {
-                Toast.makeText(this, "forth", Toast.LENGTH_SHORT).show();
-                break;
+                Intent intent=new Intent(MainActivity2.this,PostActivity.class);
+                startActivity(intent);
+
+                 break;
             }
             case R.id.myItem:
         {
             Toast.makeText(this, "My Title", Toast.LENGTH_SHORT).show();
+
             break;
         }
             case R.id.logout:
@@ -310,18 +348,15 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
         startActivity(intent);
         FirebaseAuth.getInstance().signOut();
 
+        sharedPreferences=this.getSharedPreferences("SIGN_IN",MODE_PRIVATE);
+
         editor=sharedPreferences.edit();
         editor.clear();
         editor.apply();
         finish();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        if (onlineStatusReciever!=null)
-//        unregisterReceiver(onlineStatusReciever);
-    }
+
 
     @Override
     public void onRefresh() {
@@ -333,4 +368,73 @@ if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
         getUsersData(uid);
 
     }
+
+    private void getposts()
+    {
+        postsLists=new ArrayList<>();
+        DatabaseReference postsRef=FirebaseDatabase.getInstance().getReference("Posts");
+        postsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postsLists.clear();
+               for (DataSnapshot dataSnapshot:snapshot.getChildren())
+               {
+                   Posts posts=dataSnapshot.getValue(Posts.class);
+                    if (!posts.getId().equals(uid)) {
+
+                            postsLists.add(posts);
+
+                    }
+
+               }
+               recyclerView.setMediaObjects(postsLists);
+               recyclerView.setAdapter(new StatusAdapter(MainActivity2.this,postsLists,usersLists,initGlide()));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
+
+
+    private RequestManager initGlide(){
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.white_background)
+                .error(R.drawable.loginbackground);
+
+        return Glide.with(getApplicationContext())
+                .setDefaultRequestOptions(options);
+    }
+    @Override
+    protected void onDestroy() {
+        if(recyclerView!=null)
+            recyclerView.releasePlayer();
+        super.onDestroy();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (recyclerView!=null)
+        {
+            recyclerView.startPlayer();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (recyclerView!=null)
+        {
+            recyclerView.pausePlayer();
+        }
+
+    }
+
+
 }

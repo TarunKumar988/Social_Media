@@ -271,6 +271,7 @@ public class MessageActivity extends AppCompatActivity {
                     if (users.getId().equals(userID))
                     {
                         online_status=users.getStatus();
+                        Log.e("Online Status", "  "+users.getStatus());
                         chatUser=users.getName();
                         userImage=users.getImageURL();
                         Glide.with(getApplicationContext()).load(userImage).into(userProfile);
@@ -280,7 +281,7 @@ public class MessageActivity extends AppCompatActivity {
                             onlineStatus.setText(online_status);
                         }
                         else {
-                            onlineStatus.setText(Extras.calculateOnlineStatus(online_status));
+                            onlineStatus.setText(Extras.calculateOnlineStatus(online_status,"active"));
                         }
                     }
                 }

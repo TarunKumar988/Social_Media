@@ -20,6 +20,7 @@
             android:background="@color/colorPrimary"
             style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/Theme.Design.NoActionBar"
+            app:titleTextColor="@color/white"
             android:elevation="4dp"
 
             />
@@ -36,12 +37,14 @@
             android:id="@+id/progressParent"
             android:visibility="gone"
             />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/swiper"
             >
-        <androidx.recyclerview.widget.RecyclerView
+
+        <com.example.social_media.Extras.VideoPlayerRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
@@ -52,7 +55,21 @@
             android:paddingRight="10dp"
             android:visibility="gone"
 
+
             />
+
+
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:scrollbars="vertical"-->
+<!--                android:id="@+id/recyclerview"-->
+<!--                android:paddingBottom="5dp"-->
+<!--                android:paddingTop="10dp"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:paddingRight="10dp"-->
+<!--                android:visibility="gone"-->
+<!--                />-->
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 

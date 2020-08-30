@@ -46,7 +46,7 @@ public class Extras {
             return isConnected;
 }
 
-public static String calculateOnlineStatus(String onlineStatus)
+public static String calculateOnlineStatus(String onlineStatus,String temp)
 {
     String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
     String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
@@ -98,18 +98,18 @@ public static String calculateOnlineStatus(String onlineStatus)
                     + elapsedMinutes+" Min "+ elapsedSeconds+"sec ");
    if (elapsedDays>0)
    {
-       return  "active "+elapsedDays+"d ago";
+       return  temp+" "+elapsedDays+"d ago";
    }
    else if (elapsedHours>0)
    {
-       return  "active "+elapsedHours+"h ago";
+       return  temp+" "+elapsedHours+"h ago";
    }
    else if (elapsedMinutes>0)
    {
-       return  "active "+elapsedMinutes+"m ago";
+       return  temp+" "+elapsedMinutes+"m ago";
    }
    else {
-       return  "active "+1+"m ago";
+       return  temp+" "+1+"m ago";
    }
 }
 

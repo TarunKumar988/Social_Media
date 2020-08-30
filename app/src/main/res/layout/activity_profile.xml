@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/user_name"
-
+        android:gravity="center"
         android:textSize="@dimen/dimen_20dp"
         android:id="@+id/username"
 
@@ -80,22 +80,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
          android:hint="@string/discription"
-
+        android:gravity="center"
         android:editable="false"
         android:id="@+id/discription"
         android:textSize="14dp"
 
         android:layout_marginTop="10dp"
         />
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Save"-->
 
-        android:layout_marginTop="40dp"
-        android:id="@+id/logout"
-        style="@style/Widget.MyApp.MyButton"
-        />
+<!--        android:layout_marginTop="40dp"-->
+<!--        android:id="@+id/logout"-->
+<!--        style="@style/Widget.MyApp.MyButton"-->
+<!--        />-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            >
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Posts"
+            android:textSize="14dp"
+
+            android:layout_marginTop="10dp"
+            />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_toLeftOf="@+id/gride"
+                android:padding="0dp"
+                android:layout_toStartOf="@+id/gride"
+                android:text="Linear" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/gride"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="0dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="1dp"
+                android:layout_marginRight="1dp"
+                android:text="Gride" />
+        </RelativeLayout>
+
+        <com.example.social_media.Extras.VideoPlayerRecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/postsRecycler"
+            android:layout_marginTop="10dp"
+
+            />
+
     </LinearLayout>
+
+
 </ScrollView>
 </LinearLayout>

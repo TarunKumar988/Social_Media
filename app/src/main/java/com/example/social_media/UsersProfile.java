@@ -52,6 +52,7 @@ public class UsersProfile extends AppCompatActivity {
         recyclerView=findViewById(R.id.posts);
         onlineStatus=findViewById(R.id.onlineStatus);
         mydailog=new Dialog(this);
+        mydailog.setCancelable(false);
         userID=getIntent().getExtras().getString("userID");
         username=getIntent().getExtras().getString("userName");
         userImage=getIntent().getExtras().getString("userImage");
@@ -101,6 +102,7 @@ public class UsersProfile extends AppCompatActivity {
 
 
         mydailog.setContentView(R.layout.custom_popup_friendrequest);
+
         accept=mydailog.findViewById(R.id.accept);
         reject=mydailog.findViewById(R.id.reject);
         tittle=mydailog.findViewById(R.id.tittle);
@@ -159,7 +161,7 @@ public class UsersProfile extends AppCompatActivity {
 
         }
         else {
-            onlineStatus.setText( Extras.calculateOnlineStatus(online_status));
+            onlineStatus.setText( Extras.calculateOnlineStatus(online_status,"active"));
         }
 
         if (id.equals("1"))

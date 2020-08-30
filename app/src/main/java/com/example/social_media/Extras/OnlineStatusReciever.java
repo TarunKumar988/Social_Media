@@ -23,11 +23,11 @@ public class OnlineStatusReciever extends BroadcastReceiver {
         {
             if (networkInfo.getType()==ConnectivityManager.TYPE_MOBILE)
             {
-                Toast.makeText(context, "interent By Mobile data", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "interent By Mobile data", Toast.LENGTH_SHORT).show();
             }
             if (networkInfo.getType()==ConnectivityManager.TYPE_WIFI)
             {
-                Toast.makeText(context, "interent By Wifi", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "interent By Wifi", Toast.LENGTH_SHORT).show();
             }
             setStatus(context);
         }
@@ -51,7 +51,6 @@ public class OnlineStatusReciever extends BroadcastReceiver {
                 FirebaseDatabase.getInstance().getReference("Users").child(uid).child("status").setValue("online");
             }
             else
-
             {
                 FirebaseDatabase.getInstance().getReference("Users").child(uid).child("status").setValue("offline");
 

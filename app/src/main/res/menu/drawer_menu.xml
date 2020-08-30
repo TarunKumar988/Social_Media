@@ -16,8 +16,8 @@
         android:title="Chats"
         android:icon="@mipmap/chating_icon"
         />
-    <item android:id="@+id/forth"
-        android:title="forth"
+    <item android:id="@+id/uploadPost"
+        android:title="uploadPost"
         android:icon="@mipmap/profile"
         />
 

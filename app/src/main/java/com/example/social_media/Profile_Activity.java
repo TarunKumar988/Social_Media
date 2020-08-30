@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.Manifest;
@@ -31,7 +34,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.social_media.Adapters.StatusGrideAdapter;
+import com.example.social_media.Extras.VideoPlayerRecyclerView;
+import com.example.social_media.Model.Posts;
+
 import com.bumptech.glide.Glide;
+import com.example.social_media.Adapters.StatusAdapter;
 import com.example.social_media.Extras.MyApplication;
 import com.example.social_media.Model.Users;
 import com.facebook.login.LoginManager;
@@ -57,6 +67,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.gowtham.library.ui.ActVideoTrimmer;
+import com.gowtham.library.utils.TrimmerConstants;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -68,12 +80,13 @@ import org.w3c.dom.Text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener{
+public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,View.OnClickListener {
     MaterialTextView username,userDiscription;
     CircleImageView profile,image;
     Button logout;
@@ -87,8 +100,13 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
     StorageTask uploadTask;
     static String currentUser;
     TextInputEditText discription,name;
-    MaterialButton save,cancel;
-    String getName,getDiscription;
+    MaterialButton save,cancel,linear,gride;
+    String getName,getDiscription,getImage;
+    VideoPlayerRecyclerView recyclerView;
+    DatabaseReference postsRefrence;
+    ArrayList<Posts> postsList;
+    ArrayList<Users> usersList;
+    Users user;
 
 
     private static final String TAG = Profile_Activity.class.getSimpleName();
@@ -102,11 +120,22 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
         username=findViewById(R.id.username);
         userDiscription=findViewById(R.id.discription);
         profile=findViewById(R.id.profile);
-        logout=findViewById(R.id.logout);
+
         image=findViewById(R.id.image);
         appName=findViewById(R.id.name);
+        linear=findViewById(R.id.linear);
+        gride=findViewById(R.id.gride);
 
 
+        recyclerView=findViewById(R.id.postsRecycler);
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        postsList=new ArrayList<>();
+
+        linear.setOnClickListener(this);
+        gride.setOnClickListener(this);
 
 
         // Clearing older images from cache directory
@@ -138,12 +167,7 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
 
         ImagePickerActivity.clearCache(this);
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-            }
-        });
+
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,18 +182,21 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
 
     private void getUserDetails() {
 
+usersList=new ArrayList<>();
         DatabaseReference ref=FirebaseDatabase.getInstance().getReference("Users").child(currentUser);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Users user=snapshot.getValue(Users.class);
+                usersList.clear();
+                user=snapshot.getValue(Users.class);
                 getName=user.getName();
                 getDiscription=user.getDiscription();
                 username.setText(getName);
                 userDiscription.setText(getDiscription);
-
+                getImage=user.getImageURL();
+                usersList.add(user);
                 Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile);
-
+                setAdapter();
             }
 
             @Override
@@ -290,7 +317,7 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
         progressDialog.show();
 
 
-            final StorageReference sr=storageReference.child(currentUser+"  "+System.currentTimeMillis()+".jpeg");
+            final StorageReference sr=storageReference.child(currentUser+"  "+System.currentTimeMillis()+"."+getFileExtension(imageUri));
 //            uploadTask=sr.putFile(imageUri);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -310,15 +337,15 @@ public class Profile_Activity extends AppCompatActivity implements Toolbar.OnMen
                 }
             });
 
-            task. addOnCompleteListener(new OnCompleteListener() {
+            task.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if (task.isSuccessful()) {
-                        Uri uri = (Uri) task.getResult();
-                        //Glide.with(getApplicationContext()).load(String.valueOf(imageUri)).into(profile);
-
-                        assert uri != null;
-                        String iUri = uri.toString();
+//                        Uri uri = (Uri) task.getResult();
+//                        //Glide.with(getApplicationContext()).load(String.valueOf(imageUri)).into(profile);
+//
+//                        assert uri != null;
+//                        String iUri = uri.toString();
 
                         Uri downloaduri = (Uri) task.getResult();
                         String mUri = downloaduri.toString();
@@ -489,5 +516,93 @@ progressDialog.dismiss();
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }
+
+
+    void setAdapter()
+    {
+
+
+        postsRefrence=FirebaseDatabase.getInstance()
+                .getReference("Posts");
+        postsRefrence.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postsList.clear();
+                for (DataSnapshot dataSnapshot:snapshot.getChildren())
+                    {
+                        if (dataSnapshot.exists())
+                        {
+                            Posts posts=dataSnapshot.getValue(Posts.class);
+                            if (posts.getId().equals(currentUser))
+                            {
+                                postsList.add(posts);
+                            }
+
+
+                        }
+                        else
+                        {
+                            Toast.makeText(Profile_Activity.this, "No posts", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                Log.e("Posts List "," "+postsList) ;
+                recyclerView.setMediaObjects(postsList);
+                recyclerView.setAdapter(new StatusAdapter(Profile_Activity.this,postsList,usersList,initGlide()));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+       if (v.getId()==R.id.linear)
+       {
+           if (postsList.size()>0)
+           {
+               LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+               linearLayoutManager.setReverseLayout(true);
+               linearLayoutManager.setStackFromEnd(true);
+               recyclerView.setLayoutManager(linearLayoutManager);
+               recyclerView.setMediaObjects(postsList);
+               recyclerView.setAdapter(new StatusAdapter(Profile_Activity.this,postsList,usersList,initGlide()));
+
+           }
+
+       }
+       else
+           if (v.getId()==R.id.gride)
+           {
+               if (postsList.size()>0)
+               {
+//                   GridLayoutManager gridLayoutManager=new GridLayoutManager(Profile_Activity.this,3);
+//                  gridLayoutManager.setReverseLayout(true);
+//                    recyclerView.setMediaObjects(postsList);
+//                   recyclerView.setLayoutManager(gridLayoutManager);
+                   //recyclerView.setAdapter(new StatusGrideAdapter(Profile_Activity.this,postsList,user));
+
+               }
+
+           }
+
+    }
+    private RequestManager initGlide(){
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.white_background)
+                .error(R.drawable.white_background);
+
+        return Glide.with(this)
+                .setDefaultRequestOptions(options);
+    }
+
 
 }
